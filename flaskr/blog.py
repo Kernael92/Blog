@@ -61,6 +61,7 @@ def get_post(id, check_author=True):
     return post
 
 @bp.route('/<int: id>/update', methods=('GET', 'POST'))
+@login_required
 def update(id):
     post = get_post(id)
 
@@ -85,3 +86,13 @@ def update(id):
             return redirect(url_for('blog.index'))
 
         return render_template('blog/update.htnl', post=post)
+
+@bp.route('/<int: id>/delete', methods=("POST",))
+@login_required
+def delete(id):
+    get_post(id)
+    db = get_db()
+    db.execute('DELETE FROM post WHERE id = ?', (id,))
+    db.commit()
+    return redirect(url_for('blog.index'))
+
